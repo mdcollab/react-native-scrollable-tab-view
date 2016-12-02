@@ -128,6 +128,7 @@ const ScrollableTabBar = React.createClass({
 
     return <Button
       key={`${name}_${page}`}
+      style={{flex: 1}}
       accessible={true}
       accessibilityLabel={name}
       accessibilityTraits='button'
