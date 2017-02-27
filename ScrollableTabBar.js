@@ -144,12 +144,6 @@ const ScrollableTabBar = React.createClass({
     </Button>;
   },
 
-  measureTab(page, event) {
-    const { x, width, height, } = event.nativeEvent.layout;
-    this._tabsMeasurements[page] = {left: x, right: x + width, width, height, };
-    this.updateView({value: this.props.scrollValue._value, });
-  },
-
   render() {
     const tabUnderlineStyle = {
       position: 'absolute',
@@ -186,7 +180,7 @@ const ScrollableTabBar = React.createClass({
           {this.props.tabs.map((name, page) => {
             const isTabActive = this.props.activeTab === page;
             const renderTab = this.props.renderTab || this.renderTab;
-            return renderTab(name, page, isTabActive, this.props.goToPage, this.measureTab.bind(this, page));
+            return renderTab(name, page, isTabActive, this.props.goToPage);
           })}
           <Animated.View style={[tabUnderlineStyle, dynamicTabUnderline, this.props.underlineStyle, ]} />
         </View>
@@ -208,6 +202,15 @@ const ScrollableTabBar = React.createClass({
       width = WINDOW_WIDTH;
     }
     this.setState({ _containerWidth: width, });
+    let tabWidth = width / this.props.tabs.length;
+    this.props.tabs.map((_, i) => {
+      this._tabsMeasurements[i] = {
+        left: tabWidth * i,
+        right: tabWidth * (i + 1),
+        width: tabWidth,
+        height: tabHeight,
+      };
+    });
     this.updateView({value: this.props.scrollValue._value, });
   },
 
@@ -219,9 +222,11 @@ const ScrollableTabBar = React.createClass({
 
 module.exports = ScrollableTabBar;
 
+const tabHeight = 49;
+
 const styles = StyleSheet.create({
   tab: {
-    height: 49,
+    height: tabHeight,
     alignItems: 'center',
     justifyContent: 'center',
     paddingLeft: 20,
